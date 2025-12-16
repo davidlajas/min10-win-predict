@@ -1,40 +1,87 @@
-model_name: stacking_classifier
-target: EquipoGanador
-features:
-- equipo_primera_sangre
-- asesinatos_dif
-- asistencias_diforo_dif
-- nivel_dif
-- minions_dif
-- torretas_dif
-- dragones_dif
-- heraldos_dif
-estimators:
-- name: lr
-  type: LogisticRegression
-  params:
-    max_iter: 1000
-- name: svc
-  type: SVC
-  params:
-    C: 100
-    gamma: 0.001
-    kernel: rbf
-    probability: true
-- name: xgb
-  type: XGBClassifier
-  params:
-    colsample_bytree: 0.7
-    learning_rate: 0.03
-    max_depth: 3
-    n_estimators: 150
-    subsample: 0.8
-final_estimator:
-  type: LogisticRegression
-  params:
-    max_iter: 1000
-cv: 5
-n_jobs: -1
-decision_thresholds:
-  surrender_alert: 0.2
-  safe_win: 0.7
+project:
+  name: min10-win-predict
+  description: "Predicción del equipo ganador en partidas de League of Legends en 10 mins
+  author: Tu Nombre
+  version: 1.0
+  license: MIT
+
+folders:
+  data:
+    raw: "Datos originales sin procesar"
+    processed: "Datos procesados listos para entrenamiento"
+    train: "Datos de entrenamiento"
+    test: "Datos de prueba"
+  notebooks:
+    - "01_Fuentes.ipynb"
+    - "02_LimpiezaEDA.ipynb"
+    - "03_Entrenamiento_Evaluacion.ipynb"
+  src:
+    - data_processing.py
+    - training.py
+    - evaluation.py
+  models: "Modelos entrenados y configuración"
+  app_streamlit:
+    - app.py
+    - requirements.txt
+  docs: "Documentación adicional"
+
+dependencies:
+  python_version: ">=3.10"
+  packages:
+    - pandas
+    - numpy
+    - scikit-learn
+    - xgboost
+    - matplotlib
+    - seaborn
+    - streamlit
+    - pyyaml
+
+model:
+  type: StackingClassifier
+  target: equipo_ganador
+  features:
+    - equipo_primera_sangre
+    - asesinatos_dif
+    - asistencias_dif
+    - nivel_dif
+    - minions_dif
+    - torretas_dif
+    - dragones_dif
+    - heraldos_dif
+  estimators:
+    - name: lr
+      type: LogisticRegression
+      params:
+        max_iter: 1000
+    - name: svc
+      type: SVC
+      params:
+        C: 100
+        gamma: 0.001
+        kernel: rbf
+        probability: true
+    - name: xgb
+      type: XGBClassifier
+      params:
+        colsample_bytree: 0.8
+        learning_rate: 0.05
+        max_depth: 3
+        n_estimators: 150
+        subsample: 0.8
+  final_estimator:
+    type: LogisticRegression
+    params:
+      max_iter: 1000
+  cv: 5
+  n_jobs: -1
+  decision_thresholds:
+    surrender_alert: 0.2
+    safe_win: 0.7
+
+installation_instructions:
+  - "Crear entorno virtual: python -m venv env"
+  - "Activar entorno virtual: source env/bin/activate  # Linux/MacOS"
+  - "Activar entorno virtual: .\\env\\Scripts\\activate  # Windows"
+  - "Actualizar pip: pip install --upgrade pip"
+  - "Instalar dependencias: pip install -r requirements.txt"
