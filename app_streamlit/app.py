@@ -10,15 +10,16 @@ stack_path = os.path.join(current_dir, '..', 'models','final_model_stacking.pkl'
 
 scaler_path = os.path.join(current_dir, '..', 'models','scaler.pkl')
 
-with open(stack_path, "rb") as f:  # reemplaza con la ruta correcta
-    stack = pickle.load(f)
+try:
+    with open(stack_path, "rb") as f:
+        stack = pickle.load(f)
 
-with open(scaler_path, "rb") as f:  # reemplaza con la ruta correcta
-    scaler = pickle.load(f)
+    with open(scaler_path, "rb") as f:
+        scaler = pickle.load(f)
 
-
-
-
+except FileNotFoundError:
+    st.error("❌ No se pudo cargar el modelo o el scaler")
+    st.stop()
 
 st.set_page_config(page_title="Predicción LoL", layout="wide")
 
